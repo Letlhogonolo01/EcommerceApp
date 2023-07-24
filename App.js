@@ -7,6 +7,7 @@ import { ProductDetails } from "./screens/ProductDetails.js";
 import { Cart } from "./screens/Cart.js";
 import { CartProvider } from "./CartContext.js";
 import { CartIcon } from "./components/CartIcon.js";
+import Payment from "./screens/Payment.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,14 @@ function App() {
             component={Cart}
             options={({ navigation }) => ({
               title: "Products",
+              headerRight: () => <CartIcon navigation={navigation} />,
+            })}
+          />
+           <Stack.Screen
+            name="Payment"
+            component={Payment}
+            options={({ navigation }) => ({
+              title: "Payment",
               headerRight: () => <CartIcon navigation={navigation} />,
             })}
           />

@@ -11,10 +11,17 @@ export function Cart({ navigation }) {
       setTotal(getTotalPrice());
     });
     return (
+      <>
       <View style={styles.cartLineTotal}>
         <Text style={[styles.lineLeft, styles.lineTotal]}>Total</Text>
         <Text style={styles.mainTotal}>R {total}</Text>
       </View>
+      <View style={{padding: 10,}}>
+      <Button  onPress={() => {
+          navigation.navigate("Payment") 
+          }} title="CHECKOUT" />
+    </View>
+    </>
     );
   }
 
@@ -80,6 +87,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderTopColor: "#dddddd",
     borderTopWidth: 1,
+    margin: 9
   },
   productTotal: {
     fontWeight: "bold",
