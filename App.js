@@ -8,47 +8,88 @@ import { Cart } from "./screens/Cart.js";
 import { CartProvider } from "./CartContext.js";
 import { CartIcon } from "./components/CartIcon.js";
 import Payment from "./screens/Payment.js";
+import LoginScreen from "./screens/LoginScreen.js";
+import RegistrationScreen from "./screens/RegistrationScreen.js";
+import Loader from "./components/Loader.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+const App = () => {
+
+  const [initialRouteName, setInitialRouteName] = React.useState("");
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      authUser();
+    }, 1000);
+  }, []);
+
+  const authUser = async () => {
+    try {
+      let userData = await AsyncStorage.getItem("userData");
+      if (userData) {
+        userData = JSON.parse(userData);
+        if (userData.loggedIn) {
+          setInitialRouteName("Products");
+        } else {
+          setInitialRouteName("LoginScreen");
+        }
+      } else {
+        setInitialRouteName("RegistrationScreen");
+      }
+    } catch (error) {
+      setInitialRouteName("RegistrationScreen");
+    }
+  };
+
   return (
     <CartProvider>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Products"
-            component={ProductsList}
-            options={({ navigation }) => ({
-              title: "Products",
-              headerRight: () => <CartIcon navigation={navigation} />,
-            })}
-          />
-          <Stack.Screen
-            name="ProductDetails"
-            component={ProductDetails}
-            options={({ navigation }) => ({
-              title: "Products",
-              headerRight: () => <CartIcon navigation={navigation} />,
-            })}
-          />
-          <Stack.Screen
-            name="Cart"
-            component={Cart}
-            options={({ navigation }) => ({
-              title: "Products",
-              headerRight: () => <CartIcon navigation={navigation} />,
-            })}
-          />
-           <Stack.Screen
-            name="Payment"
-            component={Payment}
-            options={({ navigation }) => ({
-              title: "Payment",
-              headerRight: () => <CartIcon navigation={navigation} />,
-            })}
-          />
-        </Stack.Navigator>
+        {!initialRouteName ? (
+          <Loader visible={true} />
+        ) : (
+          <>
+            <Stack.Navigator
+              initialRouteName={initialRouteName}
+              screenOptions={{ headerShown: true }}
+            >
+              <Stack.Screen 
+              name="LoginScreen" 
+              component={LoginScreen}
+               />
+              <Stack.Screen
+                name="RegistrationScreen"
+                component={RegistrationScreen}
+              />
+              <Stack.Screen
+                name="Products"
+                component={ProductsList}
+                options={({ navigation }) => ({
+                  title: "Products",
+                  headerRight: () => <CartIcon navigation={navigation} />,
+                })}
+              />
+              <Stack.Screen
+                name="ProductDetails"
+                component={ProductDetails}
+                options={({ navigation }) => ({
+                  title: "Products",
+                  headerRight: () => <CartIcon navigation={navigation} />,
+                })}
+              />
+              <Stack.Screen
+                name="Cart"
+                component={Cart}
+                options={({ navigation }) => ({
+                  title: "Products",
+                  headerRight: () => <CartIcon navigation={navigation} />,
+                })}
+              />
+              <Stack.Screen name="Payment" component={Payment} />
+            </Stack.Navigator>
+          </>
+        )}
       </NavigationContainer>
     </CartProvider>
   );
