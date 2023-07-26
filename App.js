@@ -86,7 +86,10 @@ const App = () => {
                   headerRight: () => <CartIcon navigation={navigation} />,
                 })}
               />
-              <Stack.Screen name="Payment" component={Payment} />
+              <Stack.Screen 
+              name="Payment" 
+              component={Payment} 
+              />
             </Stack.Navigator>
           </>
         )}
