@@ -1,37 +1,32 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Image, Text, Button, FlatList, StyleSheet } from "react-native";
-import { CartContext } from "../CartContext";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart } from "../slices/cartSlice";
 
 export function Cart({ navigation }) {
-  const { items, getItemsCount, getTotalPrice } = useContext(CartContext);
+  const cartItems = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
 
   function Totals() {
     let [total, setTotal] = useState(0);
     useEffect(() => {
       setTotal(getTotalPrice());
-    });
+    }, []);
+
+    const getTotalPrice = () => cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+
     return (
       <>
-      <View style={styles.cartLineTotal}>
-        <Text style={[styles.lineLeft, styles.lineTotal]}>Total</Text>
-        <Text style={styles.mainTotal}>R {total}</Text>
-      </View>
-      <View style={{padding: 10,}}>
-      <Button  onPress={() => {
-          navigation.navigate("Payment") 
-          }} title="CHECKOUT" />
-    </View>
-    </>
+        <View style={styles.cartLineTotal}>
+          <Text style={[styles.lineLeft, styles.lineTotal]}>Total</Text>
+          <Text style={styles.mainTotal}>R {total}</Text>
+        </View>
+        <View style={{ padding: 10 }}>
+          <Button onPress={() => navigation.navigate("Payment")} title="CHECKOUT" />
+        </View>
+      </>
     );
   }
-
-  // function incrementQuantity(item) {
-  //   // Implement your logic to increment quantity of the selected item
-  // }
-
-  // function decrementQuantity(item) {
-  //   // Implement your logic to decrement quantity of the selected item
-  // }
 
   function renderItem({ item }) {
     return (
@@ -42,18 +37,6 @@ export function Cart({ navigation }) {
             {item.product.name} x {item.qty}{" "}
             <Text style={styles.productTotal}>R {item.totalPrice}</Text>
           </Text>
-          {/* <View style={styles.quantityButtons}>
-            <Button
-              title="+"
-              onPress={() => incrementQuantity(item)}
-              color="#007bff"
-            />
-            <Button
-              title="-"
-              onPress={() => decrementQuantity(item)}
-              color="#dc3545"
-            />
-          </View> */}
         </View>
       </>
     );
@@ -63,10 +46,10 @@ export function Cart({ navigation }) {
     <FlatList
       style={styles.itemsList}
       contentContainerStyle={styles.itemsListContainer}
-      data={items}
+      data={cartItems}
       renderItem={renderItem}
       keyExtractor={(item) => item.product.id.toString()}
-      ListFooterComponent={Totals}
+      ListFooterComponent={<Totals />} // Wrap Totals in curly braces to render it as a component
     />
   );
 }
@@ -87,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderTopColor: "#dddddd",
     borderTopWidth: 1,
-    margin: 9
+    margin: 9,
   },
   productTotal: {
     fontWeight: "bold",

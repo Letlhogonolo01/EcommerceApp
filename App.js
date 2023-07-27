@@ -1,22 +1,21 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ProductsList } from "./screens/ProductsList.js";
 import { ProductDetails } from "./screens/ProductDetails.js";
 import { Cart } from "./screens/Cart.js";
-import { CartProvider } from "./CartContext.js";
 import { CartIcon } from "./components/CartIcon.js";
 import Payment from "./screens/Payment.js";
 import LoginScreen from "./screens/LoginScreen.js";
 import RegistrationScreen from "./screens/RegistrationScreen.js";
 import Loader from "./components/Loader.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import store from "./store.js";
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-
   const [initialRouteName, setInitialRouteName] = React.useState("");
 
   React.useEffect(() => {
@@ -44,7 +43,7 @@ const App = () => {
   };
 
   return (
-    <CartProvider>
+    <Provider store={store}>
       <NavigationContainer>
         {!initialRouteName ? (
           <Loader visible={true} />
@@ -54,10 +53,7 @@ const App = () => {
               initialRouteName={initialRouteName}
               screenOptions={{ headerShown: true }}
             >
-              <Stack.Screen 
-              name="LoginScreen" 
-              component={LoginScreen}
-               />
+              <Stack.Screen name="LoginScreen" component={LoginScreen} />
               <Stack.Screen
                 name="RegistrationScreen"
                 component={RegistrationScreen}
@@ -86,29 +82,13 @@ const App = () => {
                   headerRight: () => <CartIcon navigation={navigation} />,
                 })}
               />
-              <Stack.Screen 
-              name="Payment" 
-              component={Payment} 
-              />
+              <Stack.Screen name="Payment" component={Payment} />
             </Stack.Navigator>
           </>
         )}
       </NavigationContainer>
-    </CartProvider>
+    </Provider>
   );
-}
-
-const styles = StyleSheet.create({
-  Container: {
-    textAlign: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-  },
-  text: {
-    fontSize: 30,
-    fontWeight: "bold",
-  },
-});
+};
 
 export default App;

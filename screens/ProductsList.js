@@ -1,35 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
-import { getProducts } from "../services/ProductsService";
+import { useSelector } from "react-redux"; // Import the useSelector hook
 import { Product } from "../components/Product";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Buttons";
 
 export function ProductsList({ navigation }) {
-  function renderProduct({ item: product }) {
-    return (
-      <Product
-        {...product}
-        onPress={() => {
-          navigation.navigate("ProductDetails", { productId: product.id });
-        }}
-      />
-    );
-  }
+  const products = useSelector((state) => state.cart);
 
-  const [products, setProducts] = useState([]);
-
-  const [userDetails, setUserDetails] = React.useState();
-  React.useEffect(() => {
-    getUserData();
-  }, []);
-
-  const getUserData = async () => {
-    const userData = await AsyncStorage.getItem("userData");
-    if (userData) {
-      setUserDetails(JSON.parse(userData));
-    }
-  };
+  const userDetails = useSelector((state) => state.userDetails); // Assuming you have a userDetails slice in your Redux store
 
   const logout = () => {
     AsyncStorage.setItem(
@@ -39,34 +18,39 @@ export function ProductsList({ navigation }) {
     navigation.navigate("LoginScreen");
   };
 
-  useEffect(() => {
-    setProducts(getProducts());
-  });
+  function renderProduct({ item: product }) {
+    return (
+      <Product
+        {...product}
+        onPress={() => {
+          navigation.navigate("ProductDetails", { productId: product.product.id });
+        }}
+      />
+    );
+  }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        // alignItems: 'center',
-        justifyContent: "center",
-        paddingHorizontal: 15,
-      }}
-    >
-      <FlatList
-        style={styles.productsList}
-        contentContainerStyle={styles.productsListContainer}
-        keyExtractor={(item) => item.id.toString()}
-        data={products}
-        renderItem={renderProduct}
-      />
-      <View>
-        <Button title="Logout" onPress={logout} />
-      </View>
+    <View style={styles.container}>
+    <FlatList
+      style={styles.productsList}
+      contentContainerStyle={styles.productsListContainer}
+      keyExtractor={(item) => item.product.id.toString()}
+      data={products}
+      renderItem={renderProduct}
+    />
+    <View style={styles.logoutButtonContainer}>
+      <Button title="Logout" onPress={logout} />
     </View>
-  );
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 15,
+  },
   productsList: {
     backgroundColor: "#eeeeee",
   },
@@ -74,5 +58,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#eeeeee",
     paddingVertical: 8,
     marginHorizontal: 8,
+  },
+  logoutButtonContainer: {
+    marginVertical: 10,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import {
   Text,
   StyleSheet,
@@ -8,33 +8,31 @@ import {
   SafeAreaView,
   Button,
 } from "react-native";
-import { getProduct } from "../services/ProductsService";
-import { CartContext } from "../CartContext";
+import { useSelector, useDispatch } from "react-redux";
+import { addItemToCart } from "../slices/cartSlice";
 
 export function ProductDetails({ route }) {
   const { productId } = route.params;
-  const [product, setProduct] = useState({});
+  const product = useSelector((state) =>
+    state.cart.find((item) => item.product.id === productId)
+  );
 
-  useEffect(() => {
-    setProduct(getProduct(productId));
-  });
-
-  const { addItemToCart } = useContext(CartContext);
+  const dispatch = useDispatch();
 
   function onAddToCart() {
-    addItemToCart(product.id);
+    dispatch(addItemToCart(product.id));
   }
 
   return (
     <SafeAreaView>
       <ScrollView>
         <View style={styles.imageContainer}>
-          <Image style={styles.image} source={product.image} />
+          <Image style={styles.image} source={product.product.image} />
         </View>
         <View style={styles.infoContainer}>
-          <Text style={styles.name}>{product.name}</Text>
-          <Text style={styles.price}>R {product.price}</Text>
-          <Text style={styles.description}>{product.description}</Text>
+          <Text style={styles.name}>{product.product.name}</Text>
+          <Text style={styles.price}>R {product.product.price.toFixed(2)}</Text>
+          <Text style={styles.description}>{product.product.description}</Text>
           <Button onPress={onAddToCart} title="Add To Cart" />
         </View>
       </ScrollView>

@@ -1,9 +1,13 @@
-import React, { useContext } from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { CartContext } from "../CartContext";
+import { useSelector } from "react-redux"; // Import the useSelector hook
 
 export function CartIcon({ navigation }) {
-  const { getItemsCount } = useContext(CartContext);
+  const cartItems = useSelector((state) => state.cart); // Access cart items from Redux store using a selector
+
+  // Calculate the total number of items in the cart
+  const getItemsCount = () => cartItems.reduce((sum, item) => sum + item.qty, 0);
+
   return (
     <View style={styles.container}>
       <Text
