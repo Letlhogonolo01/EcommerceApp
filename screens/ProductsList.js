@@ -2,11 +2,17 @@ import React from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useSelector } from "react-redux"; // Import the useSelector hook
 import { Product } from "../components/Product";
+import { getProducts } from "../services/ProductsService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../components/Buttons";
 
 export function ProductsList({ navigation }) {
-  const products = useSelector((state) => state.cart);
+  const products = useSelector((state) => state.products);
+
+  // Add a check to prevent the error
+  if (!Array.isArray(products) || products.length === 0) {
+    return <Text>No products available.</Text>;
+  }
 
   const userDetails = useSelector((state) => state.userDetails); // Assuming you have a userDetails slice in your Redux store
 
@@ -18,12 +24,17 @@ export function ProductsList({ navigation }) {
     navigation.navigate("LoginScreen");
   };
 
-  function renderProduct({ item: product }) {
+  function renderProduct({ item }) {
+    // Add an additional check to ensure each item has the 'product' property
+    if (!item.id) {
+      return null; // Or handle the case where product information is missing
+    }
+
     return (
       <Product
-        {...product}
+        {...item}
         onPress={() => {
-          navigation.navigate("ProductDetails", { productId: product.product.id });
+          navigation.navigate("ProductDetails", { productId: item.id });
         }}
       />
     );
@@ -31,18 +42,18 @@ export function ProductsList({ navigation }) {
 
   return (
     <View style={styles.container}>
-    <FlatList
-      style={styles.productsList}
-      contentContainerStyle={styles.productsListContainer}
-      keyExtractor={(item) => item.product.id.toString()}
-      data={products}
-      renderItem={renderProduct}
-    />
-    <View style={styles.logoutButtonContainer}>
-      <Button title="Logout" onPress={logout} />
+      <FlatList
+        style={styles.productsList}
+        contentContainerStyle={styles.productsListContainer}
+        keyExtractor={(item) => item.id.toString()}
+        data={products}
+        renderItem={renderProduct}
+      />
+      <View style={styles.logoutButtonContainer}>
+        <Button title="Logout" onPress={logout} />
+      </View>
     </View>
-  </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({

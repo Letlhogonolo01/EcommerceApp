@@ -28,7 +28,3 @@ const PRODUCTS = [
 export function getProducts() {
   return PRODUCTS;
 }
-
-export function getProduct(id) {
-  return PRODUCTS.find((product) => product.id == id);
-}

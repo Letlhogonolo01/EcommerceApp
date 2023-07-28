@@ -14,7 +14,7 @@ import { addItemToCart } from "../slices/cartSlice";
 export function ProductDetails({ route }) {
   const { productId } = route.params;
   const product = useSelector((state) =>
-    state.cart.find((item) => item.product.id === productId)
+    state.products.find((item) => item.id === productId)
   );
 
   const dispatch = useDispatch();
@@ -27,12 +27,12 @@ export function ProductDetails({ route }) {
     <SafeAreaView>
       <ScrollView>
         <View style={styles.imageContainer}>
-          <Image style={styles.image} source={product.product.image} />
+          <Image style={styles.image} source={product.image} />
         </View>
         <View style={styles.infoContainer}>
-          <Text style={styles.name}>{product.product.name}</Text>
-          <Text style={styles.price}>R {product.product.price.toFixed(2)}</Text>
-          <Text style={styles.description}>{product.product.description}</Text>
+          <Text style={styles.name}>{product.name}</Text>
+          <Text style={styles.price}>R {product.price.toFixed(2)}</Text>
+          <Text style={styles.description}>{product.description}</Text>
           <Button onPress={onAddToCart} title="Add To Cart" />
         </View>
       </ScrollView>

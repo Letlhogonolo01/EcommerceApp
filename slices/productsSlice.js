@@ -1,34 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import { getProducts } from "../services/ProductsService";
 
-const initialState = [
-  {
-    id: 1,
-    name: "Apple iPhone 13 Pro Max",
-    price: 389,
-    image: require("../assets/product_images/phone.jpeg"),
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-  },
-  {
-    id: 2,
-    name: "PNY GeForce GTX 1060 6GB",
-    price: 79,
-    image: require("../assets/product_images/graphics.jpeg"),
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-  },
-  {
-    id: 3,
-    name: "Acer Predator Triton",
-    price: 979,
-    image: require("../assets/product_images/laptop.jpg"),
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-  },
-];
+const initialState = getProducts(); // Initialize the state with the fetched products
 
 const productsSlice = createSlice({
-  name: 'products',
+  name: "products",
   initialState,
   reducers: {},
 });
